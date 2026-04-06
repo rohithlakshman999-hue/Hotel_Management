@@ -19,7 +19,7 @@ const AdminDashboard = () => {
     fetchData();
 
     // Listen for real-time dashboard updates from backend
-    const socket = io('http://localhost:5000');
+    const socket = io('https://hotel-management-hvth.onrender.com');
     socket.on('dashboard_update', () => {
       console.log('Live update broadcast received... Fetching fresh data silently.');
       fetchData();
@@ -59,7 +59,7 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteRoom = async (id) => {
-    if(!window.confirm('Delete this room?')) return;
+    if (!window.confirm('Delete this room?')) return;
     try {
       await api.delete(`/rooms/${id}`);
       fetchData();
@@ -69,7 +69,7 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteBooking = async (id) => {
-    if(!window.confirm('Delete this booking?')) return;
+    if (!window.confirm('Delete this booking?')) return;
     try {
       await api.delete(`/bookings/${id}`);
       fetchData();
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteGuest = async (id) => {
-    if(!window.confirm('Delete this guest account?')) return;
+    if (!window.confirm('Delete this guest account?')) return;
     try {
       await api.delete(`/users/${id}`);
       fetchData();
@@ -98,16 +98,16 @@ const AdminDashboard = () => {
         <h2 className="text-white text-2xl font-bold mb-10 tracking-tight">Admin Panel</h2>
         <nav className="space-y-4">
           <button onClick={() => setActiveTab('overview')} className={`flex items-center gap-3 w-full p-3 rounded-lg transition-colors font-medium ${activeTab === 'overview' ? 'bg-indigo-600 text-white shadow-md' : 'hover:bg-slate-800'}`}>
-            <LayoutDashboard className="w-5 h-5"/> Overview
+            <LayoutDashboard className="w-5 h-5" /> Overview
           </button>
           <button onClick={() => setActiveTab('rooms')} className={`flex items-center gap-3 w-full p-3 rounded-lg transition-colors font-medium ${activeTab === 'rooms' ? 'bg-indigo-600 text-white shadow-md' : 'hover:bg-slate-800'}`}>
-            <BedDouble className="w-5 h-5"/> Rooms
+            <BedDouble className="w-5 h-5" /> Rooms
           </button>
           <button onClick={() => setActiveTab('bookings')} className={`flex items-center gap-3 w-full p-3 rounded-lg transition-colors font-medium ${activeTab === 'bookings' ? 'bg-indigo-600 text-white shadow-md' : 'hover:bg-slate-800'}`}>
-            <CalendarCheck className="w-5 h-5"/> Bookings
+            <CalendarCheck className="w-5 h-5" /> Bookings
           </button>
           <button onClick={() => setActiveTab('guests')} className={`flex items-center gap-3 w-full p-3 rounded-lg transition-colors font-medium ${activeTab === 'guests' ? 'bg-indigo-600 text-white shadow-md' : 'hover:bg-slate-800'}`}>
-            <Users className="w-5 h-5"/> Guests
+            <Users className="w-5 h-5" /> Guests
           </button>
         </nav>
       </div>
@@ -136,17 +136,17 @@ const AdminDashboard = () => {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
-               <h3 className="font-bold text-slate-900 mb-6">Revenue Analytics</h3>
-               <div className="h-64">
-                 <ResponsiveContainer width="100%" height="100%">
-                   <BarChart data={bookings.map(b => ({ name: new Date(b.fromDate).toLocaleDateString('en-US',{month:'short',day:'numeric'}), revenue: b.totalAmount || 0 }))}>
-                     <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
-                     <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
-                     <Tooltip cursor={{fill: '#f1f5f9'}} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                     <Bar dataKey="revenue" fill="#4f46e5" radius={[4, 4, 0, 0]} />
-                   </BarChart>
-                 </ResponsiveContainer>
-               </div>
+              <h3 className="font-bold text-slate-900 mb-6">Revenue Analytics</h3>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={bookings.map(b => ({ name: new Date(b.fromDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), revenue: b.totalAmount || 0 }))}>
+                    <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `₹${value}`} />
+                    <Tooltip cursor={{ fill: '#f1f5f9' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                    <Bar dataKey="revenue" fill="#4f46e5" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         )}
@@ -157,19 +157,19 @@ const AdminDashboard = () => {
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8">
               <h3 className="font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">Add New Room</h3>
               <form onSubmit={handleAddRoom} className="grid grid-cols-2 gap-6">
-                <input type="text" placeholder="Room Name" required value={newRoom.name} onChange={e => setNewRoom({...newRoom, name: e.target.value})} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900" />
-                <input type="number" placeholder="Price Per Night" required value={newRoom.price} onChange={e => setNewRoom({...newRoom, price: e.target.value})} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900" />
-                <select value={newRoom.roomType} onChange={e => setNewRoom({...newRoom, roomType: e.target.value})} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900">
+                <input type="text" placeholder="Room Name" required value={newRoom.name} onChange={e => setNewRoom({ ...newRoom, name: e.target.value })} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900" />
+                <input type="number" placeholder="Price Per Night" required value={newRoom.price} onChange={e => setNewRoom({ ...newRoom, price: e.target.value })} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900" />
+                <select value={newRoom.roomType} onChange={e => setNewRoom({ ...newRoom, roomType: e.target.value })} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900">
                   <option value="Standard">Standard</option>
                   <option value="Deluxe">Deluxe</option>
                   <option value="Suite">Suite</option>
                 </select>
-                <input type="number" placeholder="Capacity" required value={newRoom.capacity} onChange={e => setNewRoom({...newRoom, capacity: e.target.value})} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900" />
-                <textarea placeholder="Description" required value={newRoom.description} onChange={e => setNewRoom({...newRoom, description: e.target.value})} className="border border-slate-200 outline-none p-3 rounded-lg col-span-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all min-h-[100px] text-slate-900" />
+                <input type="number" placeholder="Capacity" required value={newRoom.capacity} onChange={e => setNewRoom({ ...newRoom, capacity: e.target.value })} className="border border-slate-200 outline-none p-3 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all text-slate-900" />
+                <textarea placeholder="Description" required value={newRoom.description} onChange={e => setNewRoom({ ...newRoom, description: e.target.value })} className="border border-slate-200 outline-none p-3 rounded-lg col-span-2 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all min-h-[100px] text-slate-900" />
                 <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg col-span-2 transition-all shadow-md hover:shadow-lg">Create Room</button>
               </form>
             </div>
-            
+
             <div className="bg-white border border-slate-200 text-sm rounded-xl overflow-hidden shadow-sm">
               <table className="w-full text-left">
                 <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
@@ -188,7 +188,7 @@ const AdminDashboard = () => {
                       <td className="p-4 text-slate-900 font-medium">₹{room.price}</td>
                       <td className="p-4">
                         <button onClick={() => handleDeleteRoom(room._id)} className="text-rose-500 font-medium hover:text-rose-700 flex items-center gap-2">
-                           <Trash2 className="w-4 h-4"/> Delete
+                          <Trash2 className="w-4 h-4" /> Delete
                         </button>
                       </td>
                     </tr>
@@ -231,7 +231,7 @@ const AdminDashboard = () => {
                             Confirmed
                           </span>
                           <button onClick={() => handleDeleteBooking(book._id)} className="text-rose-400 hover:text-rose-600 transition-colors p-2 rounded-lg hover:bg-rose-50" title="Delete Booking">
-                            <Trash2 className="w-4 h-4"/>
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
@@ -271,7 +271,7 @@ const AdminDashboard = () => {
                         <div className="flex items-center justify-between font-bold text-indigo-600">
                           <span className="bg-indigo-50 px-3 py-1 rounded-full">{u.totalBookings} Stays</span>
                           <button onClick={() => handleDeleteGuest(u._id)} className="text-rose-400 hover:text-rose-600 transition-colors p-2 rounded-lg hover:bg-rose-50" title="Delete Guest">
-                            <Trash2 className="w-4 h-4"/>
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </td>
