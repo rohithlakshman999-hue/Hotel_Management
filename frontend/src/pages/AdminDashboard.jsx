@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 import { LayoutDashboard, BedDouble, CalendarCheck, Users, Trash2 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../services/api';
@@ -16,6 +17,15 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     fetchData();
+
+    // Listen for real-time dashboard updates from backend
+    const socket = io('http://localhost:5000');
+    socket.on('dashboard_update', () => {
+      console.log('Live update broadcast received... Fetching fresh data silently.');
+      fetchData();
+    });
+
+    return () => socket.disconnect();
   }, []);
 
   const fetchData = async () => {

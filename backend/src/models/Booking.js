@@ -6,7 +6,7 @@ const bookingSchema = new mongoose.Schema({
   room: { type: mongoose.Schema.Types.ObjectId, ref: 'Room', required: true },
   fromDate: { type: Date, required: true },
   toDate: { type: Date, required: true },
-  totalPrice: { type: Number },
+  totalAmount: { type: Number },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Booking', bookingSchema);

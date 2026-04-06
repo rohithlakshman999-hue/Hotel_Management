@@ -68,10 +68,10 @@ exports.createBooking = async (req, res) => {
     if (!room) return res.status(404).json({ message: "Room not found" });
 
     const days = Math.ceil((new Date(toDate) - new Date(fromDate)) / (1000 * 60 * 60 * 24)) || 1;
-    const totalPrice = room.price * days;
+    const totalAmount = room.price * days;
 
     const booking = await Booking.create({
-      userName, phone, room: roomId, fromDate, toDate, totalPrice
+      userName, phone, room: roomId, fromDate, toDate, totalAmount
     });
 
     // Handle User creation or updating
@@ -101,9 +101,12 @@ exports.createBooking = async (req, res) => {
         },
         fromDate: booking.fromDate,
         toDate: booking.toDate,
-        totalPrice: booking.totalPrice
+        totalAmount: booking.totalAmount
       }
     });
+
+    const io = req.app.get('io');
+    if (io) io.emit('dashboard_update');
   } catch (error) {
     res.status(500).json({ message: 'Error creating booking', error: error.message });
   }
@@ -128,6 +131,10 @@ exports.deleteBooking = async (req, res) => {
     if (!booking) return res.status(404).json({ message: 'Booking not found' });
 
     await booking.deleteOne();
+    
+    const io = req.app.get('io');
+    if (io) io.emit('dashboard_update');
+
     res.json({ message: 'Booking deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting booking', error: error.message });
