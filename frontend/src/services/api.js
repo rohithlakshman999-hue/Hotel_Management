@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
-  timeout: 10000, // accommodate longer local MongoDB transactions
+  baseURL: "https://hotel-management-hvth.onrender.com"
 });
 
 export default api;
