@@ -4,7 +4,7 @@ const Room = require('./src/models/Room');
 
 dotenv.config();
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hotel_booking';
+const MONGO_URI = process.env.MONGO_URI;
 
 const seedRooms = [
   {
@@ -74,7 +74,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     console.log('MongoDB connected...');
     await Room.deleteMany({});
     console.log('Cleared existing rooms...');
-    
+
     await Room.insertMany(seedRooms);
     console.log('Successfully seeded rooms!');
     process.exit();
