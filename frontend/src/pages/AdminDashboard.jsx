@@ -10,6 +10,8 @@ const AdminDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newBookingId, setNewBookingId] = useState(null);
+  const [toastMessage, setToastMessage] = useState('');
 
   const [newRoom, setNewRoom] = useState({
     name: '', description: '', price: '', capacity: 2, roomType: 'Standard'
@@ -19,9 +21,22 @@ const AdminDashboard = () => {
     fetchData();
 
     // Listen for real-time dashboard updates from backend
-    const socket = io('https://hotel-management-hvth.onrender.com');
-    socket.on('dashboard_update', () => {
+    const socketUrl = api.defaults.baseURL || 'https://hotel-management-hvth.onrender.com';
+    const socket = io(socketUrl);
+    socket.on('dashboard_update', (data) => {
       console.log('Live update broadcast received... Fetching fresh data silently.');
+      
+      if (data && data.newBookingId) {
+        setNewBookingId(data.newBookingId);
+        setToastMessage(data.message || 'New booking received!');
+        
+        // Hide toast and highlight after 5 seconds
+        setTimeout(() => {
+          setNewBookingId(null);
+          setToastMessage('');
+        }, 5000);
+      }
+      
       fetchData();
     });
 
@@ -93,7 +108,15 @@ const AdminDashboard = () => {
   if (loading) return <div className="text-center py-20">Loading Admin Dashboard...</div>;
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 relative">
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed top-6 right-6 bg-indigo-600 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3 animate-bounce">
+          <CalendarCheck className="w-5 h-5" />
+          <span className="font-bold">{toastMessage}</span>
+        </div>
+      )}
+
       <div className="w-64 bg-slate-900 text-slate-300 min-h-screen p-6 shadow-xl z-10">
         <h2 className="text-white text-2xl font-bold mb-10 tracking-tight">Admin Panel</h2>
         <nav className="space-y-4">
@@ -215,7 +238,7 @@ const AdminDashboard = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {bookings.map(book => (
-                    <tr key={book._id} className="hover:bg-slate-50 transition-colors">
+                    <tr key={book._id} className={`transition-all duration-500 ease-in-out ${newBookingId === book._id ? 'bg-indigo-50 border-l-4 border-indigo-500 shadow-inner' : 'hover:bg-slate-50'}`}>
                       <td className="p-4">
                         <div className="font-semibold text-slate-900">{book.userName}</div>
                         <div className="text-xs text-slate-500 mt-1">{book.phone}</div>
