@@ -11,12 +11,13 @@ const Rooms = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await api.get('/rooms'); // ✅ works if baseURL has /api
+        // ✅ FIXED HERE (added /api)
+        const res = await api.get('/api/rooms');
         setRooms(res.data || []);
       } catch (err) {
         console.error("Failed to fetch rooms:", err);
 
-        // fallback data (safe)
+        // fallback data
         setRooms(dummyRooms || []);
       } finally {
         setLoading(false);

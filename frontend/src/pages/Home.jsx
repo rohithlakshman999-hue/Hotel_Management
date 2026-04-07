@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await api.get('/rooms');
+        const res = await api.get('/api/rooms');
         setFeaturedRooms((res.data || []).slice(0, 3)); // ✅ safe
       } catch (err) {
         console.error("Failed to fetch rooms:", err);

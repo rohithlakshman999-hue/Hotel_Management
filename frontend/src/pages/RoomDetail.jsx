@@ -13,7 +13,7 @@ const RoomDetail = () => {
   useEffect(() => {
     const fetchRoom = async () => {
       try {
-        const res = await api.get(`/rooms/${id}`);
+        const res = await api.get(`/api/rooms/${id}`);
         setRoom(res.data);
       } catch (err) {
         console.error("Failed to fetch room", err);
@@ -37,8 +37,8 @@ const RoomDetail = () => {
         <img src={imageUrl} alt={room.name} className="w-full h-full object-cover" />
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-900 to-transparent opacity-90"></div>
         <div className="absolute bottom-16 left-0 right-0 max-w-7xl mx-auto px-6 z-10">
-            <p className="tracking-[0.3em] uppercase text-amber-500 font-bold text-xs mb-4 drop-shadow-md">LuxeHotels Signature</p>
-            <h1 className="text-5xl md:text-7xl font-serif text-white mb-4 leading-tight drop-shadow-lg">{room.name}</h1>
+          <p className="tracking-[0.3em] uppercase text-amber-500 font-bold text-xs mb-4 drop-shadow-md">LuxeHotels Signature</p>
+          <h1 className="text-5xl md:text-7xl font-serif text-white mb-4 leading-tight drop-shadow-lg">{room.name}</h1>
         </div>
       </div>
 
@@ -62,23 +62,23 @@ const RoomDetail = () => {
             <h2 className="text-3xl font-serif text-slate-900 mb-10">Curated Amenities</h2>
             <div className="grid grid-cols-2 gap-y-8 gap-x-12">
               <div className="flex items-start gap-5 group">
-                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Wifi className="w-6 h-6"/></div> 
+                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Wifi className="w-6 h-6" /></div>
                 <span className="text-slate-800 font-medium tracking-wide">High-speed WiFi</span>
               </div>
               <div className="flex items-start gap-5 group">
-                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Tv className="w-6 h-6"/></div> 
+                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Tv className="w-6 h-6" /></div>
                 <span className="text-slate-800 font-medium tracking-wide">Premium Entertainment</span>
               </div>
               <div className="flex items-start gap-5 group">
-                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Wind className="w-6 h-6"/></div> 
+                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Wind className="w-6 h-6" /></div>
                 <span className="text-slate-800 font-medium tracking-wide">Climate Control</span>
               </div>
               <div className="flex items-start gap-5 group">
-                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Coffee className="w-6 h-6"/></div> 
+                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><Coffee className="w-6 h-6" /></div>
                 <span className="text-slate-800 font-medium tracking-wide">Artisan Espresso</span>
               </div>
               <div className="flex items-start gap-5 group">
-                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><CheckCircle className="w-6 h-6"/></div> 
+                <div className="text-amber-500 group-hover:-translate-y-1 transition-transform"><CheckCircle className="w-6 h-6" /></div>
                 <span className="text-slate-800 font-medium tracking-wide">24/7 Concierge</span>
               </div>
             </div>

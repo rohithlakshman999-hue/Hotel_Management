@@ -32,9 +32,9 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const [roomsRes, bookingsRes, usersRes] = await Promise.all([
-        api.get('/rooms?admin=true'),
-        api.get('/bookings'),
-        api.get('/users')
+        api.get('/api/rooms?admin=true'),
+        api.get('/api/bookings'),
+        api.get('/api/users')
       ]);
       setRooms(roomsRes.data);
       setBookings(bookingsRes.data);
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
   const handleAddRoom = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/rooms', newRoom);
+      await api.post('/api/rooms', newRoom);
       alert('Room added successfully');
       setNewRoom({ name: '', description: '', price: '', capacity: 2, roomType: 'Standard' });
       fetchData();
@@ -61,7 +61,7 @@ const AdminDashboard = () => {
   const handleDeleteRoom = async (id) => {
     if (!window.confirm('Delete this room?')) return;
     try {
-      await api.delete(`/rooms/${id}`);
+      await api.delete(`/api/rooms/${id}`);
       fetchData();
     } catch (err) {
       alert('Error deleting room');
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
   const handleDeleteBooking = async (id) => {
     if (!window.confirm('Delete this booking?')) return;
     try {
-      await api.delete(`/bookings/${id}`);
+      await api.delete(`/api/bookings/${id}`);
       fetchData();
     } catch (err) {
       alert('Error deleting booking');
@@ -81,7 +81,7 @@ const AdminDashboard = () => {
   const handleDeleteGuest = async (id) => {
     if (!window.confirm('Delete this guest account?')) return;
     try {
-      await api.delete(`/users/${id}`);
+      await api.delete(`/api/users/${id}`);
       fetchData();
     } catch (err) {
       alert('Error deleting guest');

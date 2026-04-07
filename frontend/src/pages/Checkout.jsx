@@ -7,7 +7,7 @@ const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const bookingDetails = location.state?.bookingDetails;
-  
+
   const [guestInfo, setGuestInfo] = useState({ name: '', email: '', phone: '' });
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [processing, setProcessing] = useState(false);
@@ -33,11 +33,11 @@ const Checkout = () => {
         toDate: bookingDetails.toDate
       };
 
-      await api.post('/bookings', bookingPayload);
-      
+      await api.post('/api/bookings', bookingPayload);
+
       alert(`Payment of ₹${bookingDetails.totalAmount} Successful via ${paymentMethod.toUpperCase()}! Your luxury reservation is confirmed.`);
       navigate('/');
-      
+
     } catch (err) {
       alert(err.response?.data?.message || "Error initiating checkout. Please try again.");
     } finally {
@@ -49,7 +49,7 @@ const Checkout = () => {
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-16">
         <div className="flex-1 bg-white p-14 shadow-xl border-t-4 border-slate-900">
           <h2 className="text-4xl font-serif text-slate-900 mb-12">Finalize Reservation</h2>
-          
+
           <form onSubmit={handleCheckout} className="space-y-12">
             {/* Guest Info Section */}
             <div>
@@ -57,16 +57,16 @@ const Checkout = () => {
               <div className="space-y-8">
                 <div>
                   <label className="text-[10px] tracking-[0.2em] uppercase font-bold text-slate-900 block mb-3">Full Legal Name</label>
-                  <input type="text" required value={guestInfo.name} onChange={e => setGuestInfo({...guestInfo, name: e.target.value})} className="w-full bg-transparent border-b-2 border-slate-200 text-slate-900 focus:border-amber-500 block py-3 outline-none transition-colors text-lg" placeholder="Mr. / Ms." />
+                  <input type="text" required value={guestInfo.name} onChange={e => setGuestInfo({ ...guestInfo, name: e.target.value })} className="w-full bg-transparent border-b-2 border-slate-200 text-slate-900 focus:border-amber-500 block py-3 outline-none transition-colors text-lg" placeholder="Mr. / Ms." />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                   <div>
                     <label className="text-[10px] tracking-[0.2em] uppercase font-bold text-slate-900 block mb-3">Email Address</label>
-                    <input type="email" required value={guestInfo.email} onChange={e => setGuestInfo({...guestInfo, email: e.target.value})} className="w-full bg-transparent border-b-2 border-slate-200 text-slate-900 focus:border-amber-500 block py-3 outline-none transition-colors text-lg" placeholder="your@email.com" />
+                    <input type="email" required value={guestInfo.email} onChange={e => setGuestInfo({ ...guestInfo, email: e.target.value })} className="w-full bg-transparent border-b-2 border-slate-200 text-slate-900 focus:border-amber-500 block py-3 outline-none transition-colors text-lg" placeholder="your@email.com" />
                   </div>
                   <div>
                     <label className="text-[10px] tracking-[0.2em] uppercase font-bold text-slate-900 block mb-3">Mobile Contact</label>
-                    <input type="tel" required value={guestInfo.phone} onChange={e => setGuestInfo({...guestInfo, phone: e.target.value})} className="w-full bg-transparent border-b-2 border-slate-200 text-slate-900 focus:border-amber-500 block py-3 outline-none transition-colors text-lg" placeholder="+1 234 567 8900" />
+                    <input type="tel" required value={guestInfo.phone} onChange={e => setGuestInfo({ ...guestInfo, phone: e.target.value })} className="w-full bg-transparent border-b-2 border-slate-200 text-slate-900 focus:border-amber-500 block py-3 outline-none transition-colors text-lg" placeholder="+1 234 567 8900" />
                   </div>
                 </div>
               </div>
@@ -76,7 +76,7 @@ const Checkout = () => {
             <div>
               <h3 className="text-sm font-bold tracking-[0.2em] uppercase text-amber-500 mb-8 pb-4 border-b border-slate-200">Payment Processing</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
+
                 {/* Card Option */}
                 <label className={`cursor-pointer border-2 rounded-xl p-6 flex flex-col items-center gap-4 transition-all ${paymentMethod === 'card' ? 'border-amber-500 bg-amber-50' : 'border-slate-200 hover:border-slate-300 bg-white'}`}>
                   <input type="radio" name="payment" value="card" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="sr-only" />
@@ -124,14 +124,14 @@ const Checkout = () => {
 
               {paymentMethod === 'upi' && (
                 <div className="mt-8 p-8 bg-slate-50 border border-slate-200 rounded-xl text-center animate-fade-in relative overflow-hidden">
-                   <div className="absolute top-0 right-0 p-4 opacity-10"><Smartphone className="w-24 h-24" /></div>
+                  <div className="absolute top-0 right-0 p-4 opacity-10"><Smartphone className="w-24 h-24" /></div>
                   <p className="text-sm text-slate-600 mb-4 relative z-10">Enter your UPI ID to simulate a secured GPay/PhonePe ping.</p>
                   <div className="max-w-xs mx-auto relative z-10">
                     <input type="text" placeholder="username@upi" required className="w-full bg-white border border-slate-200 text-slate-900 focus:border-amber-500 block p-3 outline-none transition-colors text-center" />
                   </div>
                 </div>
               )}
-              
+
               {paymentMethod === 'hotel' && (
                 <div className="mt-8 p-8 bg-slate-50 border border-slate-200 rounded-xl text-center animate-fade-in relative overflow-hidden">
                   <div className="absolute top-0 right-0 p-4 opacity-10"><Building className="w-24 h-24" /></div>
@@ -141,15 +141,15 @@ const Checkout = () => {
             </div>
 
             <div className="pt-10 border-t border-slate-200">
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 disabled={processing}
                 className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold tracking-[0.2em] uppercase text-sm py-6 flex justify-center items-center gap-4 transition-all disabled:opacity-70 shadow-lg hover:shadow-xl rounded-lg"
               >
-                {processing ? "Authorizing Securely..." : <><ShieldCheck className="w-5 h-5"/> Confirm & Authenticate Booking</>}
+                {processing ? "Authorizing Securely..." : <><ShieldCheck className="w-5 h-5" /> Confirm & Authenticate Booking</>}
               </button>
               <div className="flex items-center justify-center gap-3 text-slate-500 mt-6 text-xs tracking-widest uppercase">
-                <ShieldCheck className="w-4 h-4 text-amber-500"/> AES-256 Simulated Bank-Level Encryption
+                <ShieldCheck className="w-4 h-4 text-amber-500" /> AES-256 Simulated Bank-Level Encryption
               </div>
             </div>
           </form>
@@ -159,7 +159,7 @@ const Checkout = () => {
         <div className="w-full lg:w-[480px]">
           <div className="bg-slate-900 p-12 shadow-2xl text-white sticky top-32">
             <h3 className="text-2xl font-serif mb-10 border-b border-gray-700 pb-6">Stay Summary</h3>
-            
+
             <div className="space-y-8 mb-10 pb-10 border-b border-gray-700">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold mb-2">Selected Suite</p>
@@ -176,11 +176,11 @@ const Checkout = () => {
                 </div>
               </div>
               <div>
-                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-2">Party Size</p>
-                 <p className="font-light tracking-wide">{bookingDetails.guests} Guest(s)</p>
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-2">Party Size</p>
+                <p className="font-light tracking-wide">{bookingDetails.guests} Guest(s)</p>
               </div>
             </div>
-            
+
             <div className="space-y-6 text-sm text-gray-300 mb-10 pb-10 border-b border-gray-700">
               <div className="flex justify-between font-light tracking-wide">
                 <span>₹{bookingDetails.price} &times; {bookingDetails.days} nights</span>
@@ -191,7 +191,7 @@ const Checkout = () => {
                 <span className="text-white font-medium">Included</span>
               </div>
             </div>
-            
+
             <div className="flex justify-between items-end">
               <span className="font-bold uppercase tracking-[0.2em] text-gray-400 text-xs">Total</span>
               <span className="font-serif text-amber-500 text-4xl">₹{bookingDetails.totalAmount}</span>
