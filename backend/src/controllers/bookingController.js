@@ -127,7 +127,7 @@ exports.createBooking = async (req, res) => {
     });
 
     const io = req.app.get('io');
-    if (io) io.emit('dashboard_update');
+    if (io) io.emit('dashboard_update', { message: 'New booking received!', newBookingId: booking._id });
 
   } catch (error) {
     console.error("BOOKING ERROR:", error); // ✅ DEBUG
