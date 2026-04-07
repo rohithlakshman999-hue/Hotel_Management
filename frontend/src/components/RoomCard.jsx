@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Users, Wifi } from 'lucide-react';
 
 const RoomCard = ({ room }) => {
-  const imageUrl = room.image || 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+  const imageUrl = room.images?.[0] || 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
   
   return (
     <div className="bg-white group cursor-pointer h-full flex flex-col shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden transform hover:-translate-y-2 border border-slate-200">
@@ -16,7 +16,7 @@ const RoomCard = ({ room }) => {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <div className="absolute top-4 right-4 bg-slate-900/95 backdrop-blur-sm px-4 py-2 text-white font-semibold tracking-wide text-sm shadow-lg">
-          <span className="text-amber-500 font-bold">₹{room.price}</span> <span className="text-slate-300 font-normal text-xs uppercase">/ night</span>
+          <span className="text-amber-500 font-bold">₹{room.pricePerNight}</span> <span className="text-slate-300 font-normal text-xs uppercase">/ night</span>
         </div>
       </div>
 

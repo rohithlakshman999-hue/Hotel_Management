@@ -7,15 +7,20 @@ import { dummyRooms } from '../data/dummyRooms';
 
 const Home = () => {
   const [featuredRooms, setFeaturedRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const res = await api.get('/api/rooms');
-        setFeaturedRooms((res.data || []).slice(0, 3)); // ✅ safe
+        const data = res.data && res.data.length > 0 ? res.data : dummyRooms;
+        setFeaturedRooms(data.slice(0, 3)); // ✅ safe
       } catch (err) {
         console.error("Failed to fetch rooms:", err);
-        setFeaturedRooms((dummyRooms || []).slice(0, 3)); // fallback
+        // fallback data
+        setFeaturedRooms((dummyRooms || []).slice(0, 3));
+      } finally {
+        setLoading(false);
       }
     };
 

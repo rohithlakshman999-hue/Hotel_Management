@@ -11,12 +11,11 @@ const Rooms = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        // ✅ FIXED HERE (added /api)
         const res = await api.get('/api/rooms');
-        setRooms(res.data || []);
+        // If the database is empty, use the fallback dummy data
+        setRooms(res.data && res.data.length > 0 ? res.data : dummyRooms);
       } catch (err) {
         console.error("Failed to fetch rooms:", err);
-
         // fallback data
         setRooms(dummyRooms || []);
       } finally {
