@@ -2,7 +2,6 @@ const Booking = require('../models/Booking');
 const Room = require('../models/Room');
 const User = require('../models/User');
 const Razorpay = require('razorpay');
-const crypto = require('crypto');
 
 // @desc    Create Razorpay Order
 // @route   POST /api/bookings/create-order
@@ -17,7 +16,10 @@ exports.createOrder = async (req, res) => {
     const room = await Room.findById(roomId);
     if (!room) return res.status(404).json({ message: "Room not found" });
 
-    const days = Math.ceil((new Date(toDate) - new Date(fromDate)) / (1000 * 60 * 60 * 24)) || 1;
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+
+    const days = Math.ceil((to - from) / (1000 * 60 * 60 * 24)) || 1;
     const amount = room.price * days;
 
     const instance = new Razorpay({
@@ -26,14 +28,22 @@ exports.createOrder = async (req, res) => {
     });
 
     const options = {
-      amount: amount * 100, // amount in paise
+      amount: amount * 100,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
 
     const order = await instance.orders.create(options);
-    res.json({ success: true, order, amount, key_id: process.env.RAZORPAY_KEY_ID });
+
+    res.json({
+      success: true,
+      order,
+      amount,
+      key_id: process.env.RAZORPAY_KEY_ID
+    });
+
   } catch (error) {
+    console.error("RAZORPAY ERROR:", error);
     res.status(500).json({ message: 'Error creating Razorpay order', error: error.message });
   }
 };
@@ -42,21 +52,23 @@ exports.createOrder = async (req, res) => {
 // @route   POST /api/bookings
 exports.createBooking = async (req, res) => {
   try {
-    const { 
-      userName, email, phone, roomId, fromDate, toDate
-    } = req.body;
+    console.log("BOOKING DATA:", req.body); // ✅ DEBUG
+
+    const { userName, email, phone, roomId, fromDate, toDate } = req.body;
 
     if (!userName || !email || !phone || !roomId || !fromDate || !toDate) {
       return res.status(400).json({ message: 'Missing required booking fields' });
     }
 
-    // Check date overlap logic
-    // A booking conflicts if: fromDate <= existing toDate AND toDate >= existing fromDate
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
+
+    // Check overlapping bookings
     const overlappingBookings = await Booking.find({
       room: roomId,
       $and: [
-        { fromDate: { $lte: toDate } },
-        { toDate: { $gte: fromDate } }
+        { fromDate: { $lte: to } },
+        { toDate: { $gte: from } }
       ]
     });
 
@@ -67,15 +79,23 @@ exports.createBooking = async (req, res) => {
     const room = await Room.findById(roomId);
     if (!room) return res.status(404).json({ message: "Room not found" });
 
-    const days = Math.ceil((new Date(toDate) - new Date(fromDate)) / (1000 * 60 * 60 * 24)) || 1;
+    const days = Math.ceil((to - from) / (1000 * 60 * 60 * 24)) || 1;
     const totalAmount = room.price * days;
 
+    // ✅ FIXED BOOKING CREATE
     const booking = await Booking.create({
-      userName, phone, room: roomId, fromDate, toDate, totalAmount
+      userName,
+      email, // ✅ added
+      phone,
+      room: roomId,
+      fromDate: from,
+      toDate: to,
+      totalAmount
     });
 
-    // Handle User creation or updating
+    // Handle User creation/update
     let user = await User.findOne({ email });
+
     if (user) {
       user.totalBookings += 1;
       user.name = userName;
@@ -94,6 +114,7 @@ exports.createBooking = async (req, res) => {
       message: "Room booked successfully",
       booking: {
         userName: booking.userName,
+        email: booking.email,
         phone: booking.phone,
         room: {
           name: room.name,
@@ -107,8 +128,13 @@ exports.createBooking = async (req, res) => {
 
     const io = req.app.get('io');
     if (io) io.emit('dashboard_update');
+
   } catch (error) {
-    res.status(500).json({ message: 'Error creating booking', error: error.message });
+    console.error("BOOKING ERROR:", error); // ✅ DEBUG
+    res.status(500).json({
+      message: 'Error creating booking',
+      error: error.message
+    });
   }
 };
 
@@ -119,6 +145,7 @@ exports.getBookings = async (req, res) => {
     const bookings = await Booking.find().populate('room');
     res.json(bookings);
   } catch (error) {
+    console.error("FETCH BOOKINGS ERROR:", error);
     res.status(500).json({ message: 'Error fetching bookings' });
   }
 };
@@ -128,15 +155,23 @@ exports.getBookings = async (req, res) => {
 exports.deleteBooking = async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
-    if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
 
     await booking.deleteOne();
-    
+
     const io = req.app.get('io');
     if (io) io.emit('dashboard_update');
 
     res.json({ message: 'Booking deleted successfully' });
+
   } catch (error) {
-    res.status(500).json({ message: 'Error deleting booking', error: error.message });
+    console.error("DELETE ERROR:", error);
+    res.status(500).json({
+      message: 'Error deleting booking',
+      error: error.message
+    });
   }
 };
